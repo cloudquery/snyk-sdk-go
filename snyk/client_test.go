@@ -3,6 +3,7 @@ package snyk
 import (
 	"context"
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -65,4 +66,30 @@ func TestClient_NewClient_withUserAgent(t *testing.T) {
 	)
 
 	assert.Equal(t, "test-user-agent", client.userAgent)
+}
+
+func TestClient_NewRequest_addsApiVersion(t *testing.T) {
+	expectedUrl := fmt.Sprintf("https://testing.snyk.io/api/test-path?version=%s", restApiVerion)
+
+	client := NewClient("auth-token",
+		WithBaseURL("https://testing.snyk.io/api/"),
+	)
+
+	request, err := client.NewRequest("GET", "test-path", nil)
+	require.NoError(t, err)
+
+	assert.Equal(t, expectedUrl, request.URL.String())
+}
+
+func TestClient_NewRequest_addsApiVersion_andRespectsOriginalQueryArgs(t *testing.T) {
+	expectedUrl := fmt.Sprintf("https://testing.snyk.io/api/test-path?a=b&version=%s", restApiVerion)
+
+	client := NewClient("auth-token",
+		WithBaseURL("https://testing.snyk.io/api/"),
+	)
+
+	request, err := client.NewRequest("GET", "test-path?a=b", nil)
+	require.NoError(t, err)
+
+	assert.Equal(t, expectedUrl, request.URL.String())
 }

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const projectBasePath = "org/%v/projects"
+const projectBasePath = "orgs/%v/projects"
 
 // ProjectsService handles communication with the project related methods of the Snyk API.
 type ProjectsService service

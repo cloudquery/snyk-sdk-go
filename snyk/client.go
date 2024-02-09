@@ -13,8 +13,9 @@ import (
 )
 
 const (
+	restApiVerion    = "2024-01-23"
 	libraryVersion   = "0.4.1"
-	defaultBaseURL   = "https://snyk.io/api/"
+	defaultBaseURL   = "https://api.snyk.io/rest/"
 	defaultMediaType = "application/json"
 	defaultUserAgent = "snyk-sdk-go/" + libraryVersion + " (+https://github.com/pavel-snyk/snyk-sdk-go)"
 
@@ -129,6 +130,10 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	if err != nil {
 		return nil, err
 	}
+
+	query := u.Query()
+	query.Add("version", restApiVerion)
+	u.RawQuery = query.Encode()
 
 	buf := new(bytes.Buffer)
 	if body != nil {
